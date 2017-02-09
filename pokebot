@@ -1,0 +1,24 @@
+@listen_to('\[\[(.*)\]\]')
+def pokeFetch(message,name):
+    # adding some more debugging to figure out what's going on here.
+    if re.findall('L\[\[.*\]\]',tx(message)):
+        literal = True
+        print("Literal L found.")
+    else:
+        literal = False
+    print("Content of name variable: \"" + name + "\".")
+    if '][' in name:
+        print ("Set search identified.")
+        inData = re.findall('(.*)\]\[(.*)',name).pop(0)
+        cName,cSet = inData[0],inData[1]
+        if not cName or not cSet:
+            pokeSend(message,"Please either specify both the card and the set with [[Cardname][Set]] or just the card with [[Cardname]].")
+            return
+        else:
+            card = pokemon.getCardURL(cName,cSet,literal)
+    else:
+        card = pokemon.getCardURL(name,None,literal)
+    if not card:
+        pokeSend(message,"No card with that name found.")
+    else:
+        pokeSend(message,card)
